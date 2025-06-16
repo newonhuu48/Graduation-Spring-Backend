@@ -1,4 +1,4 @@
-package com.example.graduation.dto.teacher;
+package com.example.graduation.dto.thesis;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,13 +11,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateTeacherDTO {
+public class ApprovedThesisDTO {
 
     private Long id;
 
-    @NotEmpty(message = "First Name cannot be empty")
-    private String firstName;
+    private String title;
 
-    @NotEmpty(message = "Last Name cannot be empty")
-    private String lastName;
+
+    private Long studentId;
+    private String studentNumber;
 }

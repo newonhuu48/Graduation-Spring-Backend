@@ -40,11 +40,11 @@ public class StudentService {
                 sortDir.equals("asc") ? Sort.by(sortField).ascending() : Sort.by(sortField).descending());
 
 
+        //Initialize Specification
         Specification<Student> spec = (root, query, cb) -> cb.conjunction();
 
 
-        //ADDING FIELDS TO SPECIFICATION
-        //FOR CRITERIA QUERY
+        //Criterial queries - First Name, Last Name and Student Number
         if(firstName != null && !firstName.isBlank() ) {
             spec = spec.and(StudentSpecification.firstNameContains(firstName));
         }
@@ -58,7 +58,7 @@ public class StudentService {
 
         Page<Student> studentsPage = studentRepository.findAll(spec, pageable);
 
-        return studentsPage.map(student -> modelMapper.map(student, StudentDTO.class));
+        return studentsPage.map(this::convertToStudentDTO);
     }
 
 

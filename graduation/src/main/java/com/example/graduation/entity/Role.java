@@ -1,5 +1,6 @@
 package com.example.graduation.entity;
 
+import com.example.graduation.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,10 +14,10 @@ import org.springframework.security.core.GrantedAuthority;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Role implements GrantedAuthority {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Role
+        extends BaseEntity
+        implements GrantedAuthority {
+
 
     private String roleName;
 

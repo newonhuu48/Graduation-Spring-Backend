@@ -17,6 +17,21 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", ex.getMessage()));
     }
 
+    //New Exception classes go here
+    //
 
 
+
+
+    //General Exception
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGenericException(Exception ex) {
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(Map.of(
+                    "message", ex.getMessage()
+                    )
+
+            );
+    }
 }

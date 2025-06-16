@@ -1,5 +1,6 @@
 package com.example.graduation.entity;
 
+import com.example.graduation.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,11 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Teacher {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Teacher extends BaseEntity {
 
 
     @Column(nullable = false)
@@ -33,5 +30,6 @@ public class Teacher {
     //Associate with Profile
     @OneToOne(mappedBy = "teacher_owner")
     private User profile;
+
 
 }

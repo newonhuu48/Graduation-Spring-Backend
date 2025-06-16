@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/teachers")
 public class TeacherController {
 
-    private final ModelMapper modelMapper;
     private final TeacherService teacherService;
 
 

@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/students")
 public class StudentController {
 
-    private final ModelMapper modelMapper;
     private final StudentService studentService;
-
 
 
     //Read

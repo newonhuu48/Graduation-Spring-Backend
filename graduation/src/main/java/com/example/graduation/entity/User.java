@@ -1,5 +1,6 @@
 package com.example.graduation.entity;
 
+import com.example.graduation.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,11 +20,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User implements UserDetails {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class User
+        extends BaseEntity
+        implements UserDetails {
 
 
     private String username;
@@ -42,7 +41,7 @@ public class User implements UserDetails {
     }
 
 
-    //Associate with either - Teacher, Student or Neither
+    //Associate with - Teacher OR Student OR Neither
     //Teacher
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")

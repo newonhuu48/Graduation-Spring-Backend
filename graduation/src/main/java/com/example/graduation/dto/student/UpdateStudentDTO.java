@@ -15,11 +15,9 @@ public class UpdateStudentDTO {
 
     private Long id;
 
-    @Column(nullable = false)
     @NotEmpty(message = "First Name cannot be empty")
     private String firstName;
 
-    @Column(nullable = false)
     @NotEmpty(message = "Last Name cannot be empty")
     private String lastName;
 }
