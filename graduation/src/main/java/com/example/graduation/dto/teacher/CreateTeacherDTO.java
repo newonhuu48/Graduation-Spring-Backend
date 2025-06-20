@@ -21,6 +21,6 @@ public class CreateTeacherDTO {
     private String lastName;
 
     @NotEmpty(message = "Faculty number cannot be empty")
-    @Pattern(regexp = "^[F]?[0-9]{5,10}$", message = "Invalid Teacher Number (Teacher Number must be 5-10 digits)")
+    @Pattern(regexp = "^[T]?[0-9]{5,10}$", message = "Invalid Teacher Number (Teacher Number must be 5-10 digits)")
     private String teacherNumber; // e.g., university ID
 }
