@@ -28,13 +28,14 @@ public class ThesisController {
     public Page<SubmittedThesisDTO> getAllSubmittedTheses(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String studentNumber,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        return thesisService.getAllSubmittedTheses(title, studentNumber, page, size, sortField, sortDir);
+        return thesisService.getAllSubmittedTheses(
+                title, studentNumber, pageNumber, pageSize, sortField, sortDir);
     }
 
 

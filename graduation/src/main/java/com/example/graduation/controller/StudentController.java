@@ -22,16 +22,17 @@ public class StudentController {
     //Read
     @GetMapping
     public Page<StudentDTO> getStudents(
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String studentNumber,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortField,
-            @RequestParam(defaultValue = "asc") String sortDir
+        @RequestParam(required = false) String firstName,
+        @RequestParam(required = false) String lastName,
+        @RequestParam(required = false) String studentNumber,
+        @RequestParam(defaultValue = "0") int pageNumber,
+        @RequestParam(defaultValue = "10") int pageSize,
+        @RequestParam(defaultValue = "id") String sortField,
+        @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        return studentService.getAllStudents(firstName, lastName, studentNumber, page, size, sortField, sortDir);
+        return studentService.getAllStudents(
+                firstName, lastName, studentNumber, pageNumber, pageSize, sortField, sortDir);
     }
 
 
