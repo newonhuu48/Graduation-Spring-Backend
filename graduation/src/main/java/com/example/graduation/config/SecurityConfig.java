@@ -25,7 +25,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .cors().and()
+                .csrf().disable()
+
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll() // open endpoints
                 .anyRequest().authenticated()
@@ -48,21 +51,4 @@ public class SecurityConfig {
     }
 
 
-
-    /*
-    REACT FRONTEND COMMUNICATION SETUP
-    REACT/NODE.JS SERVER AT PORT :3000
-    */
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000") //React Port - :3000
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowCredentials(true);
-            }
-        };
-    }
 }

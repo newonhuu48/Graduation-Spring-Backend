@@ -25,13 +25,14 @@ public class TeacherController {
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) String teacherNumber,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        return teacherService.getAllTeachers(firstName, lastName, teacherNumber, page, size, sortField, sortDir);
+        return teacherService.getAllTeachers(
+                firstName, lastName, teacherNumber, pageNumber, pageSize, sortField, sortDir);
     }
 
 
