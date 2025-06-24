@@ -1,5 +1,6 @@
 package com.example.graduation.service;
 
+import com.example.graduation.dto.student.StudentDTO;
 import com.example.graduation.dto.thesis.*;
 import com.example.graduation.entity.Student;
 import com.example.graduation.entity.Thesis;
@@ -8,6 +9,7 @@ import com.example.graduation.entity.enums.Grade;
 import com.example.graduation.entity.enums.ThesisStatus;
 import com.example.graduation.exception.StudentNotFoundException;
 import com.example.graduation.exception.ThesisNotFoundException;
+import com.example.graduation.repository.StudentRepository;
 import com.example.graduation.repository.ThesisRepository;
 import com.example.graduation.repository.UserRepository;
 import com.example.graduation.repository.specification.ThesisSpecification;
@@ -23,11 +25,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class ThesisService {
 
     private final ThesisRepository thesisRepository;
+    private final StudentRepository studentRepository;
+
     private final UserRepository userRepository;
 
     private final ModelMapper modelMapper;
@@ -69,21 +75,20 @@ public class ThesisService {
     }
 
     //Add thesis - Initial Status SUBMITTED
-    public SubmittedThesisDTO submitThesis(SubmittedThesisDTO thesisDTO) {
+    public SubmittedThesisDTO submitThesis(CreateSubmittedThesisDTO createDTO) {
 
-        Thesis thesis = convertToEntity(thesisDTO);
-
-        //Initial status of thesis - Submitted
+        Thesis thesis = convertToEntity(createDTO);
         thesis.setStatus(ThesisStatus.SUBMITTED);
 
-
         Thesis savedThesis = thesisRepository.save(thesis);
+
         return convertToSubmittedThesisDTO(savedThesis);
     }
 
 
+
     //Update Submitted Thesis
-    public SubmittedThesisDTO updateThesis(Long id, UpdateSubmittedThesisDTO thesisDTO) {
+    public SubmittedThesisDTO updateSubmittedThesis(Long id, UpdateSubmittedThesisDTO thesisDTO) {
 
         Thesis existingThesis = thesisRepository.findById(id)
                 .orElseThrow(() -> new ThesisNotFoundException(id));
@@ -94,6 +99,18 @@ public class ThesisService {
         Thesis savedThesis = thesisRepository.save(existingThesis);
 
         return convertToSubmittedThesisDTO(savedThesis);
+    }
+
+    //Get Submitted Thesis By ID - To show on Edit Form
+    public UpdateSubmittedThesisDTO getSubmittedThesisById(Long id) {
+        Thesis thesis = thesisRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Thesis not found"));
+
+        if (thesis.getStatus() != ThesisStatus.SUBMITTED) {
+            throw new IllegalStateException("Only submitted theses can be edited");
+        }
+
+        return convertToUpdateSubmittedThesisDTO(thesis);
     }
 
 
@@ -250,11 +267,17 @@ public class ThesisService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    //Get Submitted Thesis By ID
+    //To show on Edit Form
+
+
+
     //
     //
     //ENTITY -> DTO
     //
     //Entity -> Submitted Thesis DTO
+
     private SubmittedThesisDTO convertToSubmittedThesisDTO(Thesis thesis) {
         SubmittedThesisDTO dto = modelMapper.map(thesis, SubmittedThesisDTO.class);
 
@@ -262,6 +285,12 @@ public class ThesisService {
             dto.setStudentId(thesis.getStudent().getId());
             dto.setStudentNumber(thesis.getStudent().getStudentNumber());
         }
+
+        return dto;
+    }
+
+    private UpdateSubmittedThesisDTO convertToUpdateSubmittedThesisDTO(Thesis thesis) {
+        UpdateSubmittedThesisDTO dto = modelMapper.map(thesis, UpdateSubmittedThesisDTO.class);
 
         return dto;
     }
@@ -299,11 +328,59 @@ public class ThesisService {
     //DTO -> ENTITY
     //
     //
-    private Thesis convertToEntity(SubmittedThesisDTO thesisDTO) {return modelMapper.map(thesisDTO, Thesis.class);}
 
-    private Thesis convertToEntity(ApprovedThesisDTO thesisDTO) {return modelMapper.map(thesisDTO, Thesis.class);}
+    //CreateSubmittedThesisDTO -> Entity
+    private Thesis convertToEntity(CreateSubmittedThesisDTO thesisDTO) {
+        Thesis thesis = new Thesis();
+        thesis.setTitle(thesisDTO.getTitle());
+        thesis.setStatus(thesisDTO.getStatus());
 
-    private Thesis convertToEntity(DefendedThesisDTO thesisDTO) {return modelMapper.map(thesisDTO, Thesis.class);}
+        if (thesisDTO.getStudentId() != null) {
+            Student student = studentRepository.findById(thesisDTO.getStudentId())
+                    .orElseThrow(() -> new RuntimeException("Student not found"));
+            thesis.setStudent(student);
+        }
+
+        return thesis;
+    }
+
+    //ApprovedThesisDTO -> Entity
+    private Thesis convertToEntity(ApprovedThesisDTO dto) {
+        Thesis thesis = new Thesis();
+        thesis.setId(dto.getId());
+        thesis.setTitle(dto.getTitle());
+        thesis.setStatus(ThesisStatus.APPROVED); // if applicable
+
+        if (dto.getStudentId() != null) {
+            Student student = studentRepository.findById(dto.getStudentId())
+                    .orElseThrow(() -> new RuntimeException("Student not found"));
+            thesis.setStudent(student);
+        }
+
+        return thesis;
+    }
+
+    //DefendedThesisDTO -> Entity
+    private Thesis convertToEntity(DefendedThesisDTO dto) {
+        Thesis thesis = new Thesis();
+
+        // 1. Preserve the existing ID so Hibernate knows this is an update
+        thesis.setId(dto.getId());
+
+        // 2. Copy simple fields
+        thesis.setTitle(dto.getTitle());
+        thesis.setStatus(ThesisStatus.DEFENDED);
+        thesis.setGrade(dto.getGrade());
+
+        // 3. Manually load and attach the Student entity
+        if (dto.getStudentId() != null) {
+            Student student = studentRepository.findById(dto.getStudentId())
+                    .orElseThrow(() -> new EntityNotFoundException("Student not found: " + dto.getStudentId()));
+            thesis.setStudent(student);
+        }
+
+        return thesis;
+    }
 
 
 }

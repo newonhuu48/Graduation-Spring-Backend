@@ -4,6 +4,7 @@ import com.example.graduation.dto.teacher.CreateTeacherDTO;
 import com.example.graduation.dto.teacher.TeacherDTO;
 import com.example.graduation.dto.teacher.UpdateTeacherDTO;
 import com.example.graduation.service.TeacherService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -39,13 +40,13 @@ public class TeacherController {
 
     //Create
     @PostMapping
-    public ResponseEntity<CreateTeacherDTO> createTeacher(@RequestBody CreateTeacherDTO teacherDTO) {
+    public ResponseEntity<CreateTeacherDTO> createTeacher(@Valid @RequestBody CreateTeacherDTO teacherDTO) {
         return new ResponseEntity<>(teacherService.createTeacher(teacherDTO), HttpStatus.CREATED);
     }
 
     //Update
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateTeacherDTO> updateTeacher(@PathVariable Long id, @RequestBody UpdateTeacherDTO teacherDTO) {
+    public ResponseEntity<UpdateTeacherDTO> updateTeacher(@Valid @PathVariable Long id, @RequestBody UpdateTeacherDTO teacherDTO) {
         return ResponseEntity.ok(teacherService.updateTeacher(id, teacherDTO));
     }
 
