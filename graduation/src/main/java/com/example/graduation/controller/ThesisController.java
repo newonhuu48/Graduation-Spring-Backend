@@ -69,16 +69,25 @@ public class ThesisController {
         return thesisService.getAllDefendedTheses(title, studentNumber, grade, page, size, sortField, sortDir);
     }
 
+    //Get Submitted Thesis By ID - To show on Edit Form
+    @GetMapping("/submitted/{id}")
+    public ResponseEntity<UpdateSubmittedThesisDTO> getSubmittedThesisById(@PathVariable Long id) {
+        UpdateSubmittedThesisDTO thesisDTO = thesisService.getSubmittedThesisById(id);
+        return ResponseEntity.ok(thesisDTO);
+    }
+
 
 
     //Create
     //
     //Initial Status - Submitted
     @PostMapping("/submit")
-    public ResponseEntity<SubmittedThesisDTO> submitThesis(@Valid @RequestBody SubmittedThesisDTO thesisDTO) {
-        SubmittedThesisDTO result = thesisService.submitThesis(thesisDTO);
+    public ResponseEntity<SubmittedThesisDTO> submitThesis(@Valid @RequestBody CreateSubmittedThesisDTO createDTO) {
+
+        SubmittedThesisDTO result = thesisService.submitThesis(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
 
 
 
@@ -90,7 +99,7 @@ public class ThesisController {
             @PathVariable Long id,
             @Valid @RequestBody UpdateSubmittedThesisDTO thesisDTO) {
 
-        SubmittedThesisDTO updated = thesisService.updateThesis(id, thesisDTO);
+        SubmittedThesisDTO updated = thesisService.updateSubmittedThesis(id, thesisDTO);
         return ResponseEntity.ok(updated);
     }
 

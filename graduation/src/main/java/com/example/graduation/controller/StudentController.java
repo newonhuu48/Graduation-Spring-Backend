@@ -3,7 +3,9 @@ package com.example.graduation.controller;
 import com.example.graduation.dto.student.CreateStudentDTO;
 import com.example.graduation.dto.student.StudentDTO;
 import com.example.graduation.dto.student.UpdateStudentDTO;
+import com.example.graduation.entity.Student;
 import com.example.graduation.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -36,15 +38,32 @@ public class StudentController {
     }
 
 
+    //Get Student By ID
+    @GetMapping("{id}")
+    public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
+        return studentService.getStudentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //Fetch UpdateStudentDTO to fill Edit Form
+    @GetMapping("{id}/edit")
+    public ResponseEntity<UpdateStudentDTO> getStudentForEdit(@PathVariable Long id) {
+        return studentService.getEditStudentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
     //Create
     @PostMapping
-    public ResponseEntity<CreateStudentDTO> createStudent(@RequestBody CreateStudentDTO studentDTO) {
+    public ResponseEntity<CreateStudentDTO> createStudent(@Valid @RequestBody CreateStudentDTO studentDTO) {
         return new ResponseEntity<>(studentService.createStudent(studentDTO), HttpStatus.CREATED);
     }
 
     //Update
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateStudentDTO> updateStudent(@PathVariable Long id, @RequestBody UpdateStudentDTO studentDTO) {
+    public ResponseEntity<UpdateStudentDTO> updateStudent(@PathVariable Long id, @Valid @RequestBody UpdateStudentDTO studentDTO) {
         return ResponseEntity.ok(studentService.updateStudent(id, studentDTO));
     }
 

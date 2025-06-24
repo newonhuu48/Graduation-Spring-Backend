@@ -8,6 +8,7 @@ import com.example.graduation.exception.StudentNotFoundException;
 import com.example.graduation.repository.StudentRepository;
 import com.example.graduation.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 import com.example.graduation.entity.Student;
 import com.example.graduation.repository.specification.StudentSpecification;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -114,11 +117,18 @@ public class StudentService {
 
     //
     //Get Student By ID
-    public StudentDTO getStudentById(long id) {
+    public Optional<StudentDTO> getStudentById(long id) {
         return studentRepository.findById(id)
-                .map(this::convertToStudentDTO)
-                .orElseThrow(() -> new StudentNotFoundException(id));
+                .map(this::convertToStudentDTO);
     }
+
+    //To load DTO on Edit Form
+    public Optional<UpdateStudentDTO> getEditStudentById(long id) {
+        return studentRepository.findById(id)
+                .map(this::convertToUpdateStudentDTO);
+    }
+
+
 
     //
     //
