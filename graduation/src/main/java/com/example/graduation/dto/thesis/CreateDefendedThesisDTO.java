@@ -10,9 +10,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateDefendedThesisDTO {
+public class CreateDefendedThesisDTO {
 
-    private Long id;
-
-    private Grade grade;
+    private Grade grade; // May be null if not yet graded
 }

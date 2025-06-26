@@ -19,7 +19,7 @@ public class TeacherSpecification {
     public static Specification<Teacher> teacherNumberContains(String teacherNumber) {
         return (root, query, cb) ->
                 teacherNumber == null ? null :
-                        cb.like(root.get("teacherNumber"), "%" + teacherNumber + "%");
+                        cb.equal(root.get("teacherNumber"), teacherNumber);
     }
 
 

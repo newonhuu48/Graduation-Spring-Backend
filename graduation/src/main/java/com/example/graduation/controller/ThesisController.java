@@ -44,13 +44,14 @@ public class ThesisController {
     public Page<ApprovedThesisDTO> getAllApprovedTheses(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String studentNumber,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        return thesisService.getAllApprovedTheses(title, studentNumber, page, size, sortField, sortDir);
+        return thesisService.getAllApprovedTheses(
+                title, studentNumber, pageNumber, pageSize, sortField, sortDir);
     }
 
 
@@ -60,13 +61,14 @@ public class ThesisController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String studentNumber,
             @RequestParam(required = false) Grade grade,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        return thesisService.getAllDefendedTheses(title, studentNumber, grade, page, size, sortField, sortDir);
+        return thesisService.getAllDefendedTheses(
+                title, studentNumber, grade, pageNumber, pageSize, sortField, sortDir);
     }
 
     //Get Submitted Thesis By ID - To show on Edit Form
@@ -76,7 +78,12 @@ public class ThesisController {
         return ResponseEntity.ok(thesisDTO);
     }
 
-
+    //Get Defended Thesis By ID - To Show on Edit Form
+    @GetMapping("/defended/{id}")
+    public ResponseEntity<UpdateDefendedThesisDTO> getDefendedThesisById(@PathVariable Long id) {
+        UpdateDefendedThesisDTO thesisDTO = thesisService.getDefendedThesisById(id);
+        return ResponseEntity.ok(thesisDTO);
+    }
 
     //Create
     //
@@ -114,6 +121,8 @@ public class ThesisController {
     }
 
 
+    //Change Thesis status
+    //
     //Submitted Thesis -> Approved Thesis
     @PutMapping("/submitted/{id}/approve")
     public ResponseEntity<ApprovedThesisDTO> approveThesis(@PathVariable Long id) {
@@ -123,11 +132,12 @@ public class ThesisController {
 
     //Approved Thesis -> Defended Thesis
     @PutMapping("/approved/{id}/defend")
-    public ResponseEntity<DefendedThesisDTO> defendThesis(
+    public ResponseEntity<CreateDefendedThesisDTO> defendThesis(
             @PathVariable Long id,
-            @Valid @RequestBody UpdateDefendedThesisDTO defendedDTO) {
+            @Valid @RequestBody CreateDefendedThesisDTO defendedDTO) {
 
-        DefendedThesisDTO defendedThesis = thesisService.defendThesis(id, defendedDTO);
+        CreateDefendedThesisDTO defendedThesis = thesisService.defendThesis(id, defendedDTO);
+
         return ResponseEntity.ok(defendedThesis);
     }
 

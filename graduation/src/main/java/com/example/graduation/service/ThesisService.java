@@ -101,6 +101,8 @@ public class ThesisService {
         return convertToSubmittedThesisDTO(savedThesis);
     }
 
+    //Get Thesis By ID
+    //
     //Get Submitted Thesis By ID - To show on Edit Form
     public UpdateSubmittedThesisDTO getSubmittedThesisById(Long id) {
         Thesis thesis = thesisRepository.findById(id)
@@ -223,8 +225,21 @@ public class ThesisService {
     }
 
 
+    //Get Defended Thesis By ID - To show on Edit Form
+    public UpdateDefendedThesisDTO getDefendedThesisById(Long id) {
+        Thesis thesis = thesisRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Thesis not found"));
+
+        if (thesis.getStatus() != ThesisStatus.DEFENDED) {
+            throw new IllegalStateException("Only defended theses can be edited");
+        }
+
+        return convertToUpdateDefendedThesisDTO(thesis);
+    }
+
+
     //Change thesis status from Approved to Defended
-    public DefendedThesisDTO defendThesis(Long id, UpdateDefendedThesisDTO thesisDTO) {
+    public CreateDefendedThesisDTO defendThesis(Long id, CreateDefendedThesisDTO thesisDTO) {
 
         Thesis thesis = thesisRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Thesis not found"));
@@ -237,7 +252,7 @@ public class ThesisService {
 
         Thesis savedThesis = thesisRepository.save(thesis);
 
-        return modelMapper.map(savedThesis, DefendedThesisDTO.class);
+        return modelMapper.map(savedThesis, CreateDefendedThesisDTO.class);
     }
 
 
@@ -294,6 +309,14 @@ public class ThesisService {
 
         return dto;
     }
+
+    private UpdateDefendedThesisDTO convertToUpdateDefendedThesisDTO(Thesis thesis) {
+        UpdateDefendedThesisDTO dto = modelMapper.map(thesis, UpdateDefendedThesisDTO.class);
+
+        return dto;
+    }
+
+
 
     //Entity -> Approved Thesis DTO
     private ApprovedThesisDTO convertToApprovedThesisDTO(Thesis thesis) {
