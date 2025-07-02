@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,6 +58,8 @@ public class ThesisController {
 
     //Defended Theses
     @GetMapping("/defended")
+    //Only ROLE_TEACHER can see Defended Theses
+    @PreAuthorize("hasRole('TEACHER')")
     public Page<DefendedThesisDTO> getAllDefendedTheses(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String studentNumber,
@@ -80,6 +83,8 @@ public class ThesisController {
 
     //Get Defended Thesis By ID - To Show on Edit Form
     @GetMapping("/defended/{id}")
+    //Only ROLE_TEACHER can open Defended Thesis Edit Form
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<UpdateDefendedThesisDTO> getDefendedThesisById(@PathVariable Long id) {
         UpdateDefendedThesisDTO thesisDTO = thesisService.getDefendedThesisById(id);
         return ResponseEntity.ok(thesisDTO);
@@ -95,9 +100,6 @@ public class ThesisController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-
-
-
     //Update
     //
     //Submitted Thesis
@@ -112,6 +114,8 @@ public class ThesisController {
 
     //Defended Thesis
     @PutMapping("/defended/{id}")
+    //Only ROLE_TEACHER can Edit Defended Theses
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<DefendedThesisDTO> updateDefendedThesis(
             @PathVariable Long id,
             @Valid @RequestBody UpdateDefendedThesisDTO thesisDTO) {
@@ -125,12 +129,16 @@ public class ThesisController {
     //
     //Submitted Thesis -> Approved Thesis
     @PutMapping("/submitted/{id}/approve")
+    //Only ROLE_TEACHER can Approve Submitted Theses
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<ApprovedThesisDTO> approveThesis(@PathVariable Long id) {
         ApprovedThesisDTO approvedThesis = thesisService.approveThesis(id);
         return ResponseEntity.ok(approvedThesis);
     }
 
     //Approved Thesis -> Defended Thesis
+    //Only ROLE_TEACHER can change Thesis status to Defended
+    @PreAuthorize("hasRole('TEACHER')")
     @PutMapping("/approved/{id}/defend")
     public ResponseEntity<CreateDefendedThesisDTO> defendThesis(
             @PathVariable Long id,
@@ -147,6 +155,8 @@ public class ThesisController {
     //
     //Delete Thesis
     @DeleteMapping("/{id}")
+    //Only ROLE_TEACHER can delete Theses
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<Void> deleteThesis(@PathVariable Long id) {
         thesisService.deleteThesis(id);
         return ResponseEntity.noContent().build();
