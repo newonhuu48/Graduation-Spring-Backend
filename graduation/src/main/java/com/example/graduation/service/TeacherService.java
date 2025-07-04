@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class TeacherService {
 
     private final TeacherRepository teacherRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final ModelMapper modelMapper;
 
@@ -104,14 +104,6 @@ public class TeacherService {
 
 
     //HELPER FUNCTIONS
-    //
-    //Get Currently Logged In USER (for Role-Based Access Control
-    public User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
     //
     //Get Student By ID
     public TeacherDTO getTeacherById(long id) {

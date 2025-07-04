@@ -28,7 +28,7 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository studentRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final ModelMapper modelMapper;
 
@@ -107,14 +107,6 @@ public class StudentService {
 
 
     //HELPER FUNCTIONS
-    //
-    //Get Currently Logged In USER (for Role-Based Access Control
-    public User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
     //
     //Get Student By ID
     public Optional<StudentDTO> getStudentById(long id) {

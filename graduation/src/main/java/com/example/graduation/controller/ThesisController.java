@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 
@@ -22,10 +23,39 @@ public class ThesisController {
     private final ThesisService thesisService;
 
 
+    //Student View Methods
+    //
+    //Create
+    @PostMapping("/student/submit")
+    //Student View
+    //Only Student can submit Thesis from this view
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<SubmittedThesisDTO> submitThesisByStudent(@Valid @RequestBody CreateSubmittedThesisDTO createDTO) throws AccessDeniedException {
+
+        SubmittedThesisDTO result = thesisService.submitThesisByStudent(createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    //Get Thesis
+    @GetMapping("/student/my-thesis")
+    //Student View
+    //Only Student can see their own thesis
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<StudentThesisDTO> getOwnThesis() {
+        return thesisService.getOwnThesis()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
+
     //Read
     //
     //Submitted Theses
     @GetMapping("/submitted")
+    //Only ROLE_TEACHER can see Submitted Theses
+    @PreAuthorize("hasRole('TEACHER')")
     public Page<SubmittedThesisDTO> getAllSubmittedTheses(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String studentNumber,
@@ -99,6 +129,8 @@ public class ThesisController {
         SubmittedThesisDTO result = thesisService.submitThesis(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
+
+
 
     //Update
     //
