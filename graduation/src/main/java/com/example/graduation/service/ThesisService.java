@@ -1,17 +1,14 @@
 package com.example.graduation.service;
 
-import com.example.graduation.dto.student.StudentDTO;
 import com.example.graduation.dto.thesis.*;
 import com.example.graduation.entity.Student;
 import com.example.graduation.entity.Thesis;
 import com.example.graduation.entity.User;
 import com.example.graduation.entity.enums.Grade;
 import com.example.graduation.entity.enums.ThesisStatus;
-import com.example.graduation.exception.StudentNotFoundException;
 import com.example.graduation.exception.ThesisNotFoundException;
 import com.example.graduation.repository.StudentRepository;
 import com.example.graduation.repository.ThesisRepository;
-import com.example.graduation.repository.UserRepository;
 import com.example.graduation.repository.specification.ThesisSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -21,10 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 @Service
@@ -34,12 +30,61 @@ public class ThesisService {
     private final ThesisRepository thesisRepository;
     private final StudentRepository studentRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final ModelMapper modelMapper;
 
 
+    //Student View
+    //
+    //Upload thesis - Initial Status SUBMITTED
+    public SubmittedThesisDTO submitThesisByStudent(CreateSubmittedThesisDTO thesisDTO) throws AccessDeniedException {
 
+        User currentUser = userService.getCurrentUser();
+
+
+        //Additional Role Check aside from @PreAuthorize("hasRole('STUDENT')")
+        if ( !userService.isUserStudent(currentUser) ) {
+            throw new AccessDeniedException("Only students can upload theses.");
+        }
+
+
+        Thesis thesis = convertToEntity(thesisDTO, currentUser);
+
+        thesis.setStudent( currentUser.getStudent_owner() );
+        thesis.setStatus(ThesisStatus.SUBMITTED);
+
+        thesisRepository.save(thesis);
+
+        return convertToSubmittedThesisDTO(thesis);
+    }
+
+    //Student View
+    //
+    //Get Thesis By Student - Currently logged-in user
+    public Optional<StudentThesisDTO> getOwnThesis() {
+        User currentUser = userService.getCurrentUser();
+
+        if (!userService.isUserStudent(currentUser)) {
+            throw new RuntimeException("User is not a student");
+        }
+
+        Long studentId = currentUser.getStudent_owner().getId();
+
+        //Debug
+        System.out.println("Student ID: " + studentId);
+
+
+        return thesisRepository.findByStudentId(studentId)
+                .map(this::convertToStudentThesisDTO);
+    }
+
+
+
+
+
+    //Teacher View
+    //
     //Theses by Status - SUBMITTED
     //
     //Get all Submitted Theses
@@ -74,10 +119,13 @@ public class ThesisService {
         return thesesPage.map(this::convertToSubmittedThesisDTO);
     }
 
-    //Add thesis - Initial Status SUBMITTED
-    public SubmittedThesisDTO submitThesis(CreateSubmittedThesisDTO createDTO) {
 
-        Thesis thesis = convertToEntity(createDTO);
+    //Upload thesis - Initial Status SUBMITTED
+    public SubmittedThesisDTO submitThesis(CreateSubmittedThesisDTO thesisDTO) {
+
+        //Teacher doesnt need to pass logged-in user thats for use in Student view
+        //He sets the ID from the Frontend form so pass null
+        Thesis thesis = convertToEntity(thesisDTO, null);
         thesis.setStatus(ThesisStatus.SUBMITTED);
 
         Thesis savedThesis = thesisRepository.save(thesis);
@@ -238,7 +286,7 @@ public class ThesisService {
     }
 
 
-    //Change thesis status from Approved to Defended
+    //Change Thesis status from Approved to Defended
     public CreateDefendedThesisDTO defendThesis(Long id, CreateDefendedThesisDTO thesisDTO) {
 
         Thesis thesis = thesisRepository.findById(id)
@@ -275,74 +323,65 @@ public class ThesisService {
 
     //HELPER FUNCTIONS
     //
-    //Get Currently Logged In USER (for Role-Based Access Control
-    public User getCurrentUser() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-
-    //Get Submitted Thesis By ID
-    //To show on Edit Form
-
-
-
-    //
-    //
     //ENTITY -> DTO
     //
     //Entity -> Submitted Thesis DTO
 
     private SubmittedThesisDTO convertToSubmittedThesisDTO(Thesis thesis) {
-        SubmittedThesisDTO dto = modelMapper.map(thesis, SubmittedThesisDTO.class);
+        SubmittedThesisDTO thesisDTO = modelMapper.map(thesis, SubmittedThesisDTO.class);
 
         if (thesis.getStudent() != null) {
-            dto.setStudentId(thesis.getStudent().getId());
-            dto.setStudentNumber(thesis.getStudent().getStudentNumber());
+            thesisDTO.setStudentId(thesis.getStudent().getId());
+            thesisDTO.setStudentNumber(thesis.getStudent().getStudentNumber());
         }
 
-        return dto;
+        return thesisDTO;
     }
 
     private UpdateSubmittedThesisDTO convertToUpdateSubmittedThesisDTO(Thesis thesis) {
-        UpdateSubmittedThesisDTO dto = modelMapper.map(thesis, UpdateSubmittedThesisDTO.class);
+        UpdateSubmittedThesisDTO thesisDTO = modelMapper.map(thesis, UpdateSubmittedThesisDTO.class);
 
-        return dto;
+        return thesisDTO;
     }
 
     private UpdateDefendedThesisDTO convertToUpdateDefendedThesisDTO(Thesis thesis) {
-        UpdateDefendedThesisDTO dto = modelMapper.map(thesis, UpdateDefendedThesisDTO.class);
+        UpdateDefendedThesisDTO thesisDTO = modelMapper.map(thesis, UpdateDefendedThesisDTO.class);
 
-        return dto;
+        return thesisDTO;
     }
 
 
 
     //Entity -> Approved Thesis DTO
     private ApprovedThesisDTO convertToApprovedThesisDTO(Thesis thesis) {
-        ApprovedThesisDTO dto = modelMapper.map(thesis, ApprovedThesisDTO.class);
+        ApprovedThesisDTO thesisDTO = modelMapper.map(thesis, ApprovedThesisDTO.class);
 
         if (thesis.getStudent() != null) {
-            dto.setStudentId(thesis.getStudent().getId());
-            dto.setStudentNumber(thesis.getStudent().getStudentNumber());
+            thesisDTO.setStudentId(thesis.getStudent().getId());
+            thesisDTO.setStudentNumber(thesis.getStudent().getStudentNumber());
         }
 
-        return dto;
+        return thesisDTO;
     }
 
 
     //Entity -> Defended Thesis DTO
     private DefendedThesisDTO convertToDefendedThesisDTO(Thesis thesis) {
-        DefendedThesisDTO dto = modelMapper.map(thesis, DefendedThesisDTO.class);
+        DefendedThesisDTO thesisDTO = modelMapper.map(thesis, DefendedThesisDTO.class);
 
         if (thesis.getStudent() != null) {
-            dto.setStudentId(thesis.getStudent().getId());
-            dto.setStudentNumber(thesis.getStudent().getStudentNumber());
+            thesisDTO.setStudentId(thesis.getStudent().getId());
+            thesisDTO.setStudentNumber(thesis.getStudent().getStudentNumber());
 
-            dto.setGrade(thesis.getGrade());
+            thesisDTO.setGrade(thesis.getGrade());
         }
 
-        return dto;
+        return thesisDTO;
+    }
+
+    //Entity -> Student Thesis DTO
+    private StudentThesisDTO convertToStudentThesisDTO(Thesis thesis) {
+        return modelMapper.map(thesis, StudentThesisDTO.class);
     }
 
 
@@ -353,15 +392,26 @@ public class ThesisService {
     //
 
     //CreateSubmittedThesisDTO -> Entity
-    private Thesis convertToEntity(CreateSubmittedThesisDTO thesisDTO) {
+    private Thesis convertToEntity(CreateSubmittedThesisDTO thesisDTO, User currentUser) {
+
         Thesis thesis = new Thesis();
+
         thesis.setTitle(thesisDTO.getTitle());
         thesis.setStatus(thesisDTO.getStatus());
 
+        //Teacher View
+        //Set Student from Frontend Form
         if (thesisDTO.getStudentId() != null) {
             Student student = studentRepository.findById(thesisDTO.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found"));
+
             thesis.setStudent(student);
+        } else if (currentUser.getStudent_owner() != null) {
+            //Student View
+            //Set Student from Authentication context - current User
+            thesis.setStudent(currentUser.getStudent_owner());
+        } else {
+            throw new RuntimeException("Student information is missing");
         }
 
         return thesis;

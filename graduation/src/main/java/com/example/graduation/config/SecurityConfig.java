@@ -30,7 +30,17 @@ public class SecurityConfig {
                 .csrf().disable()
 
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll() // open endpoints
+                .requestMatchers("/auth/**").permitAll() // Authentication endpoints
+
+                .requestMatchers(//Swagger endpoints
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/v2/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
+
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
