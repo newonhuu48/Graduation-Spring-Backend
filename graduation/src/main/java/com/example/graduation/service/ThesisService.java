@@ -20,7 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import java.util.Optional;
 
 @Service
@@ -125,7 +125,9 @@ public class ThesisService {
 
         //Teacher doesnt need to pass logged-in user thats for use in Student view
         //He sets the ID from the Frontend form so pass null
-        Thesis thesis = convertToEntity(thesisDTO, null);
+        User currentUser = userService.getCurrentUser();
+
+        Thesis thesis = convertToEntity(thesisDTO, currentUser);
         thesis.setStatus(ThesisStatus.SUBMITTED);
 
         Thesis savedThesis = thesisRepository.save(thesis);
@@ -400,7 +402,7 @@ public class ThesisService {
         thesis.setStatus(thesisDTO.getStatus());
 
         //Teacher View
-        //Set Student from Frontend Form
+        //Sets Student ID from Frontend Form
         if (thesisDTO.getStudentId() != null) {
             Student student = studentRepository.findById(thesisDTO.getStudentId())
                     .orElseThrow(() -> new RuntimeException("Student not found"));
