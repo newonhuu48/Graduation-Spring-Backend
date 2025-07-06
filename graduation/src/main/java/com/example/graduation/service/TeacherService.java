@@ -20,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class TeacherService {
@@ -106,10 +108,9 @@ public class TeacherService {
     //HELPER FUNCTIONS
     //
     //Get Student By ID
-    public TeacherDTO getTeacherById(long id) {
+    public Optional<TeacherDTO> getTeacherById(long id) {
         return teacherRepository.findById(id)
-                .map(this::convertToTeacherDTO)
-                .orElseThrow(() -> new TeacherNotFoundException(id));
+                .map(this::convertToTeacherDTO);
     }
 
     //

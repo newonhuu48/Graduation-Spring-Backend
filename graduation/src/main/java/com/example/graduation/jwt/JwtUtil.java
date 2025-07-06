@@ -48,10 +48,7 @@ public class JwtUtil {
 
 
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
+        return extractAllClaims(token)
                 .getSubject();
     }
 
@@ -60,12 +57,19 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+
+
     private boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
+        Date expiration = extractAllClaims(token)
                 .getExpiration();
         return expiration.before(new Date());
+    }
+
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
