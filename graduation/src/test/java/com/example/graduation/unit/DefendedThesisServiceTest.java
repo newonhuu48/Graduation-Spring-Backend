@@ -1,4 +1,4 @@
-package com.example.graduation.unit.service;
+package com.example.graduation.unit;
 
 import com.example.graduation.dto.thesis.DefendedThesisDTO;
 import com.example.graduation.dto.thesis.CreateDefendedThesisDTO;

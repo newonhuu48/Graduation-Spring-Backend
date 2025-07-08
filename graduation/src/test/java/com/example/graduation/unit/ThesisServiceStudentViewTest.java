@@ -1,4 +1,4 @@
-package com.example.graduation.unit.service;
+package com.example.graduation.unit;
 
 import com.example.graduation.dto.thesis.CreateSubmittedThesisDTO;
 import com.example.graduation.dto.thesis.StudentThesisDTO;
@@ -14,7 +14,6 @@ import com.example.graduation.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;

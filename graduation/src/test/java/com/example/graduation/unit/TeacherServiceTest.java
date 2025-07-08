@@ -1,6 +1,5 @@
-package com.example.graduation.unit.service;
+package com.example.graduation.unit;
 
-import com.example.graduation.dto.student.StudentDTO;
 import com.example.graduation.dto.teacher.CreateTeacherDTO;
 import com.example.graduation.dto.teacher.TeacherDTO;
 import com.example.graduation.dto.teacher.UpdateTeacherDTO;

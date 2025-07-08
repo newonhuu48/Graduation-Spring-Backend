@@ -12,5 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateDefendedThesisDTO {
 
+    private Long id;
+
     private Grade grade; // May be null if not yet graded
 }

@@ -14,6 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateSubmittedThesisDTO {
 
+    private Long id;
+
     @Column(nullable = false)
     @NotBlank(message = "Thesis title cannot be empty")
     private String title;
