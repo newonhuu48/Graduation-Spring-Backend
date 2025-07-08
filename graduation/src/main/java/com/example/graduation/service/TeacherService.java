@@ -113,6 +113,12 @@ public class TeacherService {
                 .map(this::convertToTeacherDTO);
     }
 
+    //To load DTO on Edit Form
+    public Optional<UpdateTeacherDTO> getEditTeacherById(long id) {
+        return teacherRepository.findById(id)
+                .map(this::convertToUpdateTeacherDTO);
+    }
+
     //
     //
     //ENTITY -> DTO

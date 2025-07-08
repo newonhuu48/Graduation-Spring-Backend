@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
-import java.util.List;
 
 
 @RestController
@@ -103,6 +102,7 @@ public class ThesisController {
         return thesisService.getAllDefendedTheses(
                 title, studentNumber, grade, pageNumber, pageSize, sortField, sortDir);
     }
+
 
     //Get Submitted Thesis By ID - To show on Edit Form
     @GetMapping("/submitted/{id}")

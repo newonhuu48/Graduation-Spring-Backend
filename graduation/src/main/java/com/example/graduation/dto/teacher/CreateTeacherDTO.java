@@ -14,6 +14,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateTeacherDTO {
 
+    private Long id;
+
     @NotEmpty(message = "First Name cannot be empty")
     private String firstName;
 

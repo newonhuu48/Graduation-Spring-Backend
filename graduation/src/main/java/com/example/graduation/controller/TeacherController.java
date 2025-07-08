@@ -38,6 +38,21 @@ public class TeacherController {
                 firstName, lastName, teacherNumber, pageNumber, pageSize, sortField, sortDir);
     }
 
+    //Get Teacher By ID
+    @GetMapping("{id}")
+    public ResponseEntity<TeacherDTO> getTeacherById(@PathVariable Long id) {
+        return teacherService.getTeacherById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    //Fetch UpdateTeacherDTO to fill Edit Form
+    @GetMapping("{id}/edit")
+    public ResponseEntity<UpdateTeacherDTO> getTeacherForEdit(@PathVariable Long id) {
+        return teacherService.getEditTeacherById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
 
     //Create
