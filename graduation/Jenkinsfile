@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = "${tool 'JDK 21'}" // Make sure this is configured in Jenkins' global config
+        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                 sh './gradlew test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t graduation-spring .'
+            }
+        }
+
+        stage('Run Docker Compose') {
+            steps {
+                sh 'docker compose -f docker-compose.yml up -d'
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+            sh 'docker compose down'
+        }
+    }
+}
