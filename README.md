@@ -28,7 +28,7 @@ This is a full-stack web application for managing students, teachers, theses, an
 
 ---
 
-🔐 Demo Credentials
+##🔐 Demo Credentials
 You can use the following test accounts to explore the app:
 
 Role	    Username	Password
