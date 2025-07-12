@@ -28,16 +28,17 @@ This is a full-stack web application for managing students, teachers, theses, an
 
 ---
 
-##🔐 Demo Credentials
+## 🔐 Demo Credentials
+
 You can use the following test accounts to explore the app:
 
-Role	    Username	Password
-👨‍🏫 Teacher	teacher1	teacher1
-🎓 Student	student1	student1
+| Role     | Username  | Password  |
+| -------- | --------- | --------- |
+| 👨‍🏫 Teacher | teacher1 | teacher1 |
+| 🎓 Student | student1 | student1 |
 
-Teachers can manage all students, teachers, theses, and defenses
-
-Students can view and upload their own thesis and see all approved theses
+- Teachers can manage all students, teachers, theses, and defenses.
+- Students can view and upload their own thesis and see all approved theses.
 
 ---
 
