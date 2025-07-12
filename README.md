@@ -1,41 +1,38 @@
-# Graduation Project – Full Stack Application
+# 🎓 Graduation Project – Full Stack Application
 
-This is a full-stack web application built for managing students, teachers, theses, and defenses.
+This is a full-stack web application for managing students, teachers, theses, and defenses. Built using Spring Boot (Java) and React, with JWT-based authentication and Dockerized deployment.
+
+---
 
 ## 🚀 Tech Stack
 
 - **Frontend**: React, Bootstrap
 - **Backend**: Spring Boot (Java)
-- **Database**: (MySQL)
-- **Authentication**: JWT
+- **Database**: MySQL
+- **Authentication**: JWT (JSON Web Tokens)
+- **Testing**: Cypress (E2E)
+- **CI/CD**: Jenkins
+- **Containerization**: Docker
+
+---
 
 ## 📦 Features
 
-- Student listing with Pagination
-- Create, read, update, delete entities (CRUD)
-- Student, Teacher, Thesis, and Defense endpoints
-- Basic login flow with protected routes
-- Sorting and filtering
-- Security with JWT
+- 🔐 Secure login with JWT (Student & Teacher roles)
+- 📄 CRUD operations for Students, Teachers, Theses, and Defenses
+- 📚 Thesis status workflow (Submitted → Approved → Defended)
+- 🔎 Filtering, sorting, and pagination
+- 🎯 Role-based access to routes (via frontend and backend)
+- 🧪 Cypress end-to-end tests
+- 📦 Dockerized backend and frontend
 
+---
 
+## 🐳 Docker Setup (Recommended)
 
+> You must have [Docker](https://www.docker.com/) installed.
 
-## 🛠️ Setup Instructions
+### Run backend + frontend together:
 
-### Backend (Spring Boot)
-
-1. Open the backend project.
-2. Configure database credentials in `application.properties`.
-3. Run the application (`./mvnw spring-boot:run` or in your IDE).
-4. Server runs on: `http://localhost:8080`
-
-### Frontend (React)
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd graduation-spring-frontend
-   npm install
-   npm start
-   
-
+```bash
+docker-compose up --build
