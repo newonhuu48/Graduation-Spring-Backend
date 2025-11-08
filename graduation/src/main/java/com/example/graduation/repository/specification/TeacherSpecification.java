@@ -16,7 +16,7 @@ public class TeacherSpecification {
                         cb.like(cb.lower(root.get("lastName")), "%" + lastName.toLowerCase() + "%");
     }
 
-    public static Specification<Teacher> teacherNumberContains(String teacherNumber) {
+    public static Specification<Teacher> teacherNumberEquals(String teacherNumber) {
         return (root, query, cb) ->
                 teacherNumber == null ? null :
                         cb.equal(root.get("teacherNumber"), teacherNumber);

@@ -55,7 +55,7 @@ public class StudentService {
             spec = spec.and(StudentSpecification.lastNameContains(lastName));
         }
         if(studentNumber != null && !studentNumber.isBlank()) {
-            spec = spec.and(StudentSpecification.studentNumberContains(studentNumber));
+            spec = spec.and(StudentSpecification.studentNumberEquals(studentNumber));
         }
 
 

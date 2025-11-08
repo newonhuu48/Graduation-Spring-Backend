@@ -53,7 +53,7 @@ public class TeacherService {
             spec = spec.and(TeacherSpecification.lastNameContains(lastName));
         }
         if(teacherNumber != null && !teacherNumber.isBlank()) {
-            spec = spec.and(TeacherSpecification.teacherNumberContains(teacherNumber));
+            spec = spec.and(TeacherSpecification.teacherNumberEquals(teacherNumber));
         }
 
 
